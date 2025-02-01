@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Rick y Morty</string>
+    <string name="pregunta_home">Elige que información quieres ver</string>
+    <string name="saludo_home">Hola!</string>
+    <string name="episodios_nombre">Episodios</string>
+    <string name="personajes_nombre">Personajes</string>
 </resources>
