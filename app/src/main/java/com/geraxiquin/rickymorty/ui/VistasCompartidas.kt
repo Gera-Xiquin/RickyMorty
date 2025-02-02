@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -74,5 +75,13 @@ class VistasCompartidas {
         ) {
             CircularProgressIndicator()
         }
+    }
+
+    @Composable
+    fun ModifierButton(): ButtonColors {
+       return ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.teal_0),      // Cambia el color de fondo
+            contentColor = Color.White       // Cambia el color del texto
+        )
     }
 }

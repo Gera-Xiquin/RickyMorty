@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import com.geraxiquin.rickymorty.models.ApiRespuesta
 import com.geraxiquin.rickymorty.models.Episodios
+import com.geraxiquin.rickymorty.models.Ubicacion
 import com.geraxiquin.rickymorty.models.genericGet
 import com.geraxiquin.rickymorty.ui.EpisodiosUi
 import com.google.gson.Gson
@@ -17,6 +18,8 @@ import retrofit2.create
 class endpoint {
     val url_server = "https://rickandmortyapi.com/api/"
     val ENDPOINT_EPISODIOS = "episode"
+    val ENDPOINT_PERSONAJES = "character"
+    val ENDPOINT_UBICACION = "location/"
 
     lateinit var endpoint: String
     lateinit var activity: Activity
@@ -91,6 +94,8 @@ class endpoint {
             }
             api = APIConecction().getData().create<ApiServiceKotlin>()
             Log.i("peticion endpoint $endpoint", params.toString())
+
+            // se dejo un case por cada endpoint para tener la posibilidad de tener varias estructuras y que desde acá se puede devolver el modelo
             retorno = when (endpoint) {
                 "episodio" -> {
                     withContext(Dispatchers.IO) {
@@ -104,6 +109,36 @@ class endpoint {
                                 params.toString()
                             )
                             endpointResponse
+                        }
+                    }
+                }
+                "personajes"->{
+                    withContext(Dispatchers.IO) {
+                        val endpointResponse = api.getApiQuery(ENDPOINT_PERSONAJES,params.toString().toInt())?.body()
+                        if (endpointResponse?.info?.count!=0) {
+                            endpointResponse?:ApiRespuesta()
+                        } else {
+                            error(
+                                "",
+                                ENDPOINT_PERSONAJES,
+                                params.toString()
+                            )
+                            endpointResponse
+                        }
+                    }
+                }
+                "ubicacion"->{
+                    withContext(Dispatchers.IO) {
+                        val endpointResponse = api.getApiUbicacion(ENDPOINT_UBICACION+params.toString().toInt())?.body()
+                        if (endpointResponse?.id !=0) {
+                            endpointResponse?:Ubicacion()
+                        } else {
+                            error(
+                                "",
+                                ENDPOINT_UBICACION,
+                                params.toString()
+                            )
+                            Ubicacion()
                         }
                     }
                 }

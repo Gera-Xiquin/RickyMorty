@@ -2,6 +2,7 @@ package com.geraxiquin.rickymorty.Controlador.Red
 
 
 import com.geraxiquin.rickymorty.models.ApiRespuesta
+import com.geraxiquin.rickymorty.models.Ubicacion
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -11,6 +12,11 @@ interface ApiServiceKotlin {
     suspend fun getApi(
         @Url url: String
     ): Response<ApiRespuesta>?
+
+   @GET
+    suspend fun getApiUbicacion(
+        @Url url: String
+    ): Response<Ubicacion>
 
     @GET
     suspend fun getApiQuery(

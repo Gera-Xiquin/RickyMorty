@@ -4,4 +4,5 @@
     <string name="saludo_home">Hola!</string>
     <string name="episodios_nombre">Episodios</string>
     <string name="personajes_nombre">Personajes</string>
+    <string name="ubicacion_nombre">Ubicación</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.geraxiquin.rickymorty.models
 
 data class Ubicacion(
-    var id:Int,
+    var id:Int=0,
     var name: String?="",
     var type:String?="",
     var dimension:String?="",

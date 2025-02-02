@@ -1,30 +1,17 @@
 package com.geraxiquin.rickymorty.ui
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,14 +19,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.geraxiquin.rickymorty.Controlador.EpisodiosViewModel
 import com.geraxiquin.rickymorty.MainActivity
@@ -80,9 +64,7 @@ class EpisodiosUi {
                 state = listState
             ) {
                 items(episodios.value) { episodio ->
-                    AppItem(
-                        episodio = episodio, navController
-                    )
+                    AppItem(episodio = episodio, navController)
                 }
             }
         }
@@ -155,6 +137,8 @@ class EpisodiosUi {
     @Composable
     fun DetalleEpisodio(navController: NavHostController) {
         VistasCompartidas().Atras(navController, episodioClase.name.toString())
+        var personajes =""
+        episodioClase.characters?.map {personajes = personajes + it.split("/").last()+","}
         Column(
             modifier = VistasCompartidas()
                 .ModifierLazy()
@@ -220,7 +204,18 @@ class EpisodiosUi {
                     fontWeight = FontWeight.Normal
                 )
                 Text(
-                    text = episodioClase.characters?.toList().toString(),
+                    text = personajes.substring(0,personajes.length-1),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .padding(3.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = episodioClase.characters.toString(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )

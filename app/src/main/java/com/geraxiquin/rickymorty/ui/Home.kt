@@ -49,6 +49,20 @@ class Home {
                 contentAlignment = Alignment.Center,
             )
             {
+                Column(  modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .padding(horizontal = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                    Spacer(modifier = Modifier.height(40.dp))
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 32.sp,
+                    color = colorResource(id = R.color.black),
+                )
+
+            }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,25 +97,40 @@ class Home {
                         onClick = { navController.navigate("episodios") },
                         modifier = Modifier
                             .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_0),      // Cambia el color de fondo
-                            contentColor = Color.White       // Cambia el color del texto
-                        )
-
+                        colors = VistasCompartidas().ModifierButton()
                     ) {
                         Text(stringResource(id = R.string.episodios_nombre))
                     }
                     Button(
                         onClick = { navController.navigate("personajes") },
-                        modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.teal_0),      // Cambia el color de fondo
-                            contentColor = Color.White       // Cambia el color del texto
-                        )
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = VistasCompartidas().ModifierButton()
                     ) {
                         Text(stringResource(id = R.string.personajes_nombre))
                     }
                 }
+                Column(  modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    Text(
+                        text = "Rick y Morty by Gerardo Xiquin",
+                        fontSize = 12.sp,
+                        color = colorResource(id = R.color.black),
+                    )
+
+                    Text(
+                        text = "Código Fuente en https://github.com/Gera-Xiquin/RickyMorty ",
+                        fontSize = 12.sp,
+                        color = colorResource(id = R.color.black),
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
+
+
         }
     }
 }

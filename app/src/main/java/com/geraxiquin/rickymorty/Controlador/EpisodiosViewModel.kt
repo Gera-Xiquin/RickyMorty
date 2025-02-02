@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class EpisodiosViewModel(activity: Activity) : ViewModel() {
-    private val _episodios = MutableStateFlow<List<Episodios>>(emptyList()) // Estado de la UI
-    val episodios: StateFlow<List<Episodios>> = _episodios
+    private val _episodios =
+        MutableStateFlow<MutableList<Episodios>>(mutableListOf()) // Estado de la UI
+    val episodios: StateFlow<MutableList<Episodios>> = _episodios
     private val _isLoading = MutableStateFlow<Boolean>(false) // Estado de la UI
     val isLoading: StateFlow<Boolean> = _isLoading
 
@@ -29,7 +30,6 @@ class EpisodiosViewModel(activity: Activity) : ViewModel() {
 
     fun obtenerEpisodios(activity: Activity) {
         if (_isLoading.value) return
-
         viewModelScope.launch {
             _isLoading.value = true
             try {
@@ -39,25 +39,23 @@ class EpisodiosViewModel(activity: Activity) : ViewModel() {
                     currentPage,
                     null
                 )) as ApiRespuesta
-                    if (respueta.info.pages >= currentPage) {
-                        currentPage++
-                        _episodios.value = Gson().fromJson(
+                if (respueta.info.pages >= currentPage) {
+                    currentPage++
+                    _episodios.value.addAll(
+                        Gson().fromJson(
                             Gson().toJson(respueta.results),
                             Array<Episodios>::class.java
-                        ).toList()
-                        Log.i("respuesta", _episodios.value.toString())
-                        _isLoading.value = false
-                    } else {
-                        Toast.makeText(
-                            activity,
-                            "Has cargado toda la información",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
-                        _isLoading.value = false
-                    }
-
-
+                        ).toMutableList()
+                    )
+                    Log.i("respuesta", _episodios.value.size.toString())
+                } else {
+                    Toast.makeText(
+                        activity,
+                        "Has cargado toda la información",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             } catch (e: Exception) {
                 Log.e("EpisodiosViewModel", "Error al obtener episodios", e)
             } finally {
