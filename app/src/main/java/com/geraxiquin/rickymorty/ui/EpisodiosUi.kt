@@ -1,5 +1,6 @@
 package com.geraxiquin.rickymorty.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.geraxiquin.rickymorty.Controlador.EpisodiosViewModel
+import com.geraxiquin.rickymorty.Controlador.Red.endpoint
 import com.geraxiquin.rickymorty.MainActivity
 import com.geraxiquin.rickymorty.R
 import com.geraxiquin.rickymorty.models.Episodios
@@ -42,6 +44,8 @@ class EpisodiosUi {
     ) {
         val episodios = viewModel.episodios.collectAsState()
         val isLoading = viewModel.isLoading.collectAsState() // Obtenemos el estado de carga
+        val todo = viewModel.todo.collectAsState()
+
 
         val listState = rememberLazyListState()
         VistasCompartidas().Atras(navController, stringResource(id = R.string.episodios_nombre))
@@ -51,13 +55,21 @@ class EpisodiosUi {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 }
                 .collect { lastVisibleItemIndex ->
                     val totalItems = episodios.value.size
-                    if (totalItems - lastVisibleItemIndex <= 5) {
-                        viewModel.obtenerEpisodios(activity)
+                    if (totalItems - lastVisibleItemIndex <= 1) {
+                        if (todo.value) {
+                            VistasCompartidas().TodaInfo(activity)
+                        } else {
+                            if (!endpoint().isNetworkAvailable(activity)) {
+                                VistasCompartidas().SinConexion(activity)
+                            } else {
+                                viewModel.obtenerEpisodios()
+                            }
+                        }
                     }
                 }
         }
         if (isLoading.value) {
-          VistasCompartidas().Carga()
+            VistasCompartidas().Carga()
         } else {
             LazyColumn(
                 modifier = VistasCompartidas().ModifierLazy(),
@@ -67,7 +79,8 @@ class EpisodiosUi {
                     AppItem(episodio = episodio, navController)
                 }
             }
-        }
+       }
+
     }
 
     @Composable
@@ -137,8 +150,8 @@ class EpisodiosUi {
     @Composable
     fun DetalleEpisodio(navController: NavHostController) {
         VistasCompartidas().Atras(navController, episodioClase.name.toString())
-        var personajes =""
-        episodioClase.characters?.map {personajes = personajes + it.split("/").last()+","}
+        var personajes = ""
+        episodioClase.characters?.map { personajes = personajes + it.split("/").last() + "," }
         Column(
             modifier = VistasCompartidas()
                 .ModifierLazy()
@@ -204,7 +217,7 @@ class EpisodiosUi {
                     fontWeight = FontWeight.Normal
                 )
                 Text(
-                    text = personajes.substring(0,personajes.length-1),
+                    text = personajes.substring(0, personajes.length - 1),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -36,14 +37,15 @@ class MainActivity : ComponentActivity() {
         val episodiosUI = EpisodiosUi()
         val personajesUI = PersonajesUi()
         val ubicacionUi = UbicacionUi()
-
+        val viewModelEpisodios :EpisodiosViewModel = viewModel()
+        val viewModelCharacters :CharactersViewModel = viewModel()
 
         NavHost(navController = navController, startDestination = "home") {
             composable("home") { Home().HomeScreen(navController) }
             composable("episodios") {
                 episodiosUI.IrEpisodios(
                     navController,
-                    EpisodiosViewModel(this@MainActivity), this@MainActivity
+                   viewModelEpisodios , this@MainActivity
                 )
             }
             composable("detailsEpisodio") { episodiosUI.DetalleEpisodio(navController) }
@@ -56,7 +58,7 @@ class MainActivity : ComponentActivity() {
             composable("personajes") {
                 personajesUI.CharactersScreen(
                     this@MainActivity,
-                    CharactersViewModel(this@MainActivity), navController
+                    viewModelCharacters, navController
                 )
             }
         }

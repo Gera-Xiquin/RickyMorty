@@ -1,16 +1,12 @@
 package com.geraxiquin.rickymorty.Controlador.Red
 
-import android.app.Activity
+
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
-import android.widget.Toast
 import com.geraxiquin.rickymorty.models.ApiRespuesta
-import com.geraxiquin.rickymorty.models.Episodios
 import com.geraxiquin.rickymorty.models.Ubicacion
 import com.geraxiquin.rickymorty.models.genericGet
-import com.geraxiquin.rickymorty.ui.EpisodiosUi
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.create
@@ -22,7 +18,6 @@ class endpoint {
     val ENDPOINT_UBICACION = "location/"
 
     lateinit var endpoint: String
-    lateinit var activity: Activity
     lateinit var params: Any
     lateinit var url: String
     lateinit var api: ApiServiceKotlin
@@ -31,14 +26,12 @@ class endpoint {
 
     suspend fun performApiCall(
         endpointP: String,
-        activityP: Activity,
         paramsP: Any?,
         urlP: String?,
     ): Any {
         var retorno = Any()
         retorno = performApiCallSuspend<genericGet>(
             endpointP,
-            activityP,
             paramsP,
             urlP
         )
@@ -51,13 +44,12 @@ class endpoint {
                 contador += 1
                 return this.performApiCallSuspend<genericGet>(
                     endpointP,
-                    activityP,
                     paramsP,
                     urlP
                 )
             } else {
                 try {
-                Toast.makeText(activityP,"error de red",Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(activityP,"error de red",Toast.LENGTH_SHORT).show()
                 } catch (_: Exception) {
                 }
                 return retorno
@@ -71,40 +63,29 @@ class endpoint {
 
     suspend inline fun <reified T> performApiCallSuspend(
         endpointP: String,
-        activityP: Activity,
         paramsP: Any?,
         urlP: String?,
         contadorP: Int? = 0
     ): Any {
         endpoint = endpointP
-        activity = activityP
         params = paramsP ?: Any()
         url = urlP ?: ""
         contador = contadorP ?: 0
         var retorno = Any()
         try {
-            if (!isNetworkAvailable(activity)) {
-                activity.runOnUiThread {
-                    try {
-                       Toast.makeText(activityP,"Sin internet",Toast.LENGTH_SHORT).show()
-                    }catch (_:Exception){ }
-                }
-                return Any()
-
-            }
             api = APIConecction().getData().create<ApiServiceKotlin>()
             Log.i("peticion endpoint $endpoint", params.toString())
 
-            // se dejo un case por cada endpoint para tener la posibilidad de tener varias estructuras y que desde acá se puede devolver el modelo
             retorno = when (endpoint) {
                 "episodio" -> {
                     withContext(Dispatchers.IO) {
-                        val endpointResponse = api.getApiQuery(ENDPOINT_EPISODIOS,params.toString().toInt())?.body()
-                        if (endpointResponse?.info?.count!=0) {
-                           endpointResponse?:ApiRespuesta()
+                        val endpointResponse =
+                            api.getApiQuery(ENDPOINT_EPISODIOS, params.toString().toInt())?.body()
+                        if (endpointResponse?.info?.count != 0) {
+                            endpointResponse ?: ApiRespuesta()
                         } else {
                             error(
-                                 "",
+                                "",
                                 ENDPOINT_EPISODIOS,
                                 params.toString()
                             )
@@ -112,11 +93,13 @@ class endpoint {
                         }
                     }
                 }
-                "personajes"->{
+
+                "personajes" -> {
                     withContext(Dispatchers.IO) {
-                        val endpointResponse = api.getApiQuery(ENDPOINT_PERSONAJES,params.toString().toInt())?.body()
-                        if (endpointResponse?.info?.count!=0) {
-                            endpointResponse?:ApiRespuesta()
+                        val endpointResponse =
+                            api.getApiQuery(ENDPOINT_PERSONAJES, params.toString().toInt())?.body()
+                        if (endpointResponse?.info?.count != 0) {
+                            endpointResponse ?: ApiRespuesta()
                         } else {
                             error(
                                 "",
@@ -127,11 +110,14 @@ class endpoint {
                         }
                     }
                 }
-                "ubicacion"->{
+
+                "ubicacion" -> {
                     withContext(Dispatchers.IO) {
-                        val endpointResponse = api.getApiUbicacion(ENDPOINT_UBICACION+params.toString().toInt())?.body()
-                        if (endpointResponse?.id !=0) {
-                            endpointResponse?:Ubicacion()
+                        val endpointResponse =
+                            api.getApiUbicacion(ENDPOINT_UBICACION + params.toString().toInt())
+                                ?.body()
+                        if (endpointResponse?.id != 0) {
+                            endpointResponse ?: Ubicacion()
                         } else {
                             error(
                                 "",
@@ -142,6 +128,7 @@ class endpoint {
                         }
                     }
                 }
+
                 else -> throw IllegalArgumentException("Tipo endpoint no admitido: $endpoint")
             }
             Log.i("respuesta endpoint $endpoint", retorno.toString())
@@ -158,7 +145,8 @@ class endpoint {
 
     fun error(message: String, endpoint: String, toString: String) {
         //Conexion a firebase
-        Log.e("endpoint ${endpoint}",message+" "+toString)}
+        Log.e("endpoint ${endpoint}", message + " " + toString)
+    }
 
     fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager =

@@ -1,6 +1,7 @@
 package com.geraxiquin.rickymorty.ui
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.geraxiquin.rickymorty.Controlador.CharactersViewModel
+import com.geraxiquin.rickymorty.Controlador.Red.endpoint
 import com.geraxiquin.rickymorty.MainActivity
 import com.geraxiquin.rickymorty.R
 import com.geraxiquin.rickymorty.models.Personajes
@@ -49,6 +51,7 @@ class PersonajesUi {
     ) {
         val characters = viewModel.characters.collectAsState()
         val isLoading = viewModel.isLoading.collectAsState() // Obtenemos el estado de carga
+        val todo = viewModel.todo.collectAsState()
 
         val listState = rememberLazyListState()
         VistasCompartidas().Atras(navController, stringResource(id = R.string.personajes_nombre))
@@ -58,8 +61,16 @@ class PersonajesUi {
             snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 }
                 .collect { lastVisibleItemIndex ->
                     val totalItems = characters.value.size
-                    if (totalItems - lastVisibleItemIndex <= 5) {
-                        viewModel.loadCharacters(activity)
+                    if (totalItems - lastVisibleItemIndex <= 1) {
+                        if (todo.value) {
+                           VistasCompartidas().TodaInfo(activity)
+                        } else {
+                            if (!endpoint().isNetworkAvailable(activity)) {
+                              VistasCompartidas().SinConexion(activity)
+                            } else {
+                                viewModel.loadCharacters()
+                            }
+                        }
                     }
                 }
         }
@@ -71,7 +82,7 @@ class PersonajesUi {
                 state = listState
             ) {
                 items(characters.value) { characters ->
-                    AppItem(personaje = characters, navController,activity)
+                    AppItem(personaje = characters, navController, activity)
                 }
             }
         }
@@ -79,7 +90,7 @@ class PersonajesUi {
 
     @RequiresApi(35)
     @Composable
-    fun AppItem(personaje: Personajes, navController: NavHostController,activity: MainActivity) {
+    fun AppItem(personaje: Personajes, navController: NavHostController, activity: MainActivity) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -221,9 +232,12 @@ class PersonajesUi {
                     .padding(vertical = 8.dp, horizontal = 32.dp)
                     .fillMaxWidth()
             ) {
-                Button(onClick = {
-                    activity.ubicacionSelected =  personaje.location.url?.split("/")?.last()?:"0"
-                    navController.navigate("verUbicacion") },
+                Button(
+                    onClick = {
+                        activity.ubicacionSelected =
+                            personaje.location.url?.split("/")?.last() ?: "0"
+                        navController.navigate("verUbicacion")
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = VistasCompartidas().ModifierButton()
                 ) {

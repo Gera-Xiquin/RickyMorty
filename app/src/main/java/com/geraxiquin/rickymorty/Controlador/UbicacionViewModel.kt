@@ -32,7 +32,6 @@ class UbicacionViewModel(activity: MainActivity,idUbicacion : Int): ViewModel() 
             try {
                 val respueta = (endpoint().performApiCall(
                     "ubicacion",
-                    activity,
                     ubicaion,
                     null
                 )) as Ubicacion

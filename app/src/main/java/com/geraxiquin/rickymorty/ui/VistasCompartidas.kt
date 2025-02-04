@@ -1,5 +1,8 @@
 package com.geraxiquin.rickymorty.ui
 
+import android.content.Context
+import android.widget.Toast
+import androidx.benchmark.json.BenchmarkData
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -16,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,7 +36,7 @@ import com.geraxiquin.rickymorty.R
 class VistasCompartidas {
 
     @Composable
-    fun Atras(navController: NavHostController,texto:String) {
+    fun Atras(navController: NavHostController, texto: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,9 +83,22 @@ class VistasCompartidas {
 
     @Composable
     fun ModifierButton(): ButtonColors {
-       return ButtonDefaults.buttonColors(
+        return ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.teal_0),      // Cambia el color de fondo
             contentColor = Color.White       // Cambia el color del texto
         )
+    }
+
+    fun TodaInfo(context: Context){
+        Toast.makeText(
+            context,
+            context.getString(R.string.NoMasInfo),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    fun SinConexion(context: Context){
+        Toast.makeText(context, context.getString(R.string.sinConexion), Toast.LENGTH_SHORT)
+            .show()
     }
 }

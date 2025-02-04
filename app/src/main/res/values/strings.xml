@@ -5,4 +5,6 @@
     <string name="episodios_nombre">Episodios</string>
     <string name="personajes_nombre">Personajes</string>
     <string name="ubicacion_nombre">Ubicación</string>
+    <string name="NoMasInfo">Has cargado toda la información</string>
+    <string name="sinConexion">Sin internet, revisa tu wifi o datos móviles</string>
 </resources>
